@@ -1,0 +1,122 @@
+name: InitiativeBoard
+options:
+  deploymentTarget:
+    iOS: "17.0"
+  developmentLanguage: en
+  knownRegions: [en, zh-Hans, zh-Hant]
+settings:
+  base:
+    APP_ID: com.hgsldswk.initiativetracker
+    APP_STORE_ID: ""
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    SWIFT_VERSION: "5.0"
+    CODE_SIGN_STYLE: Automatic
+targets:
+  InitiativeBoard:
+    type: application
+    platform: iOS
+    sources: [InitiativeBoard, Shared]
+    dependencies:
+      - target: InitiativeBoardWidget
+        embed: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: $(APP_ID)
+        TARGETED_DEVICE_FAMILY: "1"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+      configs:
+        Debug:
+          SWIFT_ACTIVE_COMPILATION_CONDITIONS: "$(inherited) DEBUG"
+        Release:
+          CODE_SIGN_STYLE: Manual
+          CODE_SIGN_IDENTITY: Apple Distribution
+          PROVISIONING_PROFILE_SPECIFIER: InitiativeBoard AppStore
+    entitlements:
+      path: InitiativeBoard/InitiativeBoard.entitlements
+      properties:
+        com.apple.security.application-groups: [group.com.hgsldswk.initiativetracker]
+    info:
+      path: InitiativeBoard/Info.plist
+      properties:
+        CFBundleDisplayName: Initiative Tracker
+        CFBundleDevelopmentRegion: en
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait, UIInterfaceOrientationLandscapeLeft, UIInterfaceOrientationLandscapeRight]
+        ITSAppUsesNonExemptEncryption: false
+        APP_STORE_ID: $(APP_STORE_ID)
+        InitiativeProProductID: $(APP_ID).pro
+        InitiativeTrialProductID: $(APP_ID).trial
+        CFBundleURLTypes:
+          - CFBundleURLName: com.hgsldswk.initiativetracker
+            CFBundleURLSchemes: [initiativeboard]
+  InitiativeBoardWidget:
+    type: app-extension
+    platform: iOS
+    sources:
+      - InitiativeBoardWidget
+      - path: Shared
+        excludes: [AdvanceThrottle.swift, Board.swift, BoardFiles.swift, Entitlement.swift, Launch.swift, ShareQR.swift]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: $(APP_ID).widget
+        TARGETED_DEVICE_FAMILY: "1"
+        SKIP_INSTALL: YES
+        APPLICATION_EXTENSION_API_ONLY: YES
+      configs:
+        Release:
+          CODE_SIGN_STYLE: Manual
+          CODE_SIGN_IDENTITY: Apple Distribution
+          PROVISIONING_PROFILE_SPECIFIER: InitiativeBoard Widget AppStore
+    entitlements:
+      path: InitiativeBoardWidget/InitiativeBoardWidget.entitlements
+      properties:
+        com.apple.security.application-groups: [group.com.hgsldswk.initiativetracker]
+    info:
+      path: InitiativeBoardWidget/Info.plist
+      properties:
+        CFBundleDisplayName: Initiative Tracker
+        CFBundleDevelopmentRegion: en
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+  InitiativeBoardTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources: [InitiativeBoardTests, Shared]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: $(APP_ID).tests
+        GENERATE_INFOPLIST_FILE: YES
+  InitiativeBoardUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources: [InitiativeBoardUITests]
+    dependencies:
+      - target: InitiativeBoard
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: $(APP_ID).uitests
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_TARGET_NAME: InitiativeBoard
+schemes:
+  InitiativeBoard:
+    build:
+      targets:
+        InitiativeBoard: all
+        InitiativeBoardTests: [test]
+    test:
+      config: Debug
+      targets: [InitiativeBoardTests]
+  InitiativeBoardUI:
+    build:
+      targets:
+        InitiativeBoard: all
+        InitiativeBoardUITests: [test]
+    test:
+      config: Debug
+      targets: [InitiativeBoardUITests]
+
